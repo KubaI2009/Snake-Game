@@ -1,0 +1,1232 @@
+﻿<Window x:Class="SnakeGame.Root"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SnakeGame"
+        mc:Ignorable="d"
+        Title="Snake Game"
+        Height="450"
+        Width="375"
+        ResizeMode="NoResize"
+        Background="Gray">
+    
+    <!-- one tile is a 25x25 rectangle -->
+    <!-- the board is a 15x15 matrix of tiles-->
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock"
+               x:Key="Tile">
+            <Setter Property="Margin" Value="0, 0, 0, 0" />
+            <Setter Property="Text" Value="" />
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="DarkSlateGray" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+        
+        <Style TargetType="Button"
+               x:Key="ControlButton">
+            <Setter Property="Margin" Value="0, 0, 0, 0" />
+            <Setter Property="Background" Value="AliceBlue" />
+            <Setter Property="Foreground" Value="DarkSlateGray" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Grid.RowSpan" Value="2" />
+            <Setter Property="Grid.ColumnSpan" Value="2" />
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock Name="Tb0_0"
+           Grid.Row="0"
+           Grid.Column="0"
+           Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_1"
+                   Grid.Row="0"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_2"
+                   Grid.Row="0"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_3"
+                   Grid.Row="0"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_4"
+                   Grid.Row="0"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_5"
+                   Grid.Row="0"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_6"
+                   Grid.Row="0"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_7"
+                   Grid.Row="0"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_8"
+                   Grid.Row="0"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_9"
+                   Grid.Row="0"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_10"
+                   Grid.Row="0"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_11"
+                   Grid.Row="0"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_12"
+                   Grid.Row="0"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_13"
+                   Grid.Row="0"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb0_14"
+                   Grid.Row="0"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_0"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_1"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_2"
+                   Grid.Row="1"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_3"
+                   Grid.Row="1"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_4"
+                   Grid.Row="1"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_5"
+                   Grid.Row="1"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_6"
+                   Grid.Row="1"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_7"
+                   Grid.Row="1"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_8"
+                   Grid.Row="1"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_9"
+                   Grid.Row="1"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_10"
+                   Grid.Row="1"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_11"
+                   Grid.Row="1"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_12"
+                   Grid.Row="1"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_13"
+                   Grid.Row="1"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb1_14"
+                   Grid.Row="1"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_0"
+                   Grid.Row="2"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_1"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_2"
+                   Grid.Row="2"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_3"
+                   Grid.Row="2"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_4"
+                   Grid.Row="2"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_5"
+                   Grid.Row="2"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_6"
+                   Grid.Row="2"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_7"
+                   Grid.Row="2"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_8"
+                   Grid.Row="2"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_9"
+                   Grid.Row="2"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_10"
+                   Grid.Row="2"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_11"
+                   Grid.Row="2"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_12"
+                   Grid.Row="2"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_13"
+                   Grid.Row="2"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb2_14"
+                   Grid.Row="2"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_0"
+                   Grid.Row="3"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_1"
+                   Grid.Row="3"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_2"
+                   Grid.Row="3"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_3"
+                   Grid.Row="3"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_4"
+                   Grid.Row="3"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_5"
+                   Grid.Row="3"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_6"
+                   Grid.Row="3"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_7"
+                   Grid.Row="3"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_8"
+                   Grid.Row="3"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_9"
+                   Grid.Row="3"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_10"
+                   Grid.Row="3"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_11"
+                   Grid.Row="3"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_12"
+                   Grid.Row="3"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_13"
+                   Grid.Row="3"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb3_14"
+                   Grid.Row="3"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_0"
+                   Grid.Row="4"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_1"
+                   Grid.Row="4"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_2"
+                   Grid.Row="4"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_3"
+                   Grid.Row="4"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_4"
+                   Grid.Row="4"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_5"
+                   Grid.Row="4"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_6"
+                   Grid.Row="4"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_7"
+                   Grid.Row="4"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_8"
+                   Grid.Row="4"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_9"
+                   Grid.Row="4"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_10"
+                   Grid.Row="4"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_11"
+                   Grid.Row="4"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_12"
+                   Grid.Row="4"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_13"
+                   Grid.Row="4"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb4_14"
+                   Grid.Row="4"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_0"
+                   Grid.Row="5"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_1"
+                   Grid.Row="5"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_2"
+                   Grid.Row="5"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_3"
+                   Grid.Row="5"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_4"
+                   Grid.Row="5"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_5"
+                   Grid.Row="5"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_6"
+                   Grid.Row="5"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_7"
+                   Grid.Row="5"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_8"
+                   Grid.Row="5"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_9"
+                   Grid.Row="5"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_10"
+                   Grid.Row="5"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_11"
+                   Grid.Row="5"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_12"
+                   Grid.Row="5"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_13"
+                   Grid.Row="5"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb5_14"
+                   Grid.Row="5"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_0"
+                   Grid.Row="6"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_1"
+                   Grid.Row="6"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_2"
+                   Grid.Row="6"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_3"
+                   Grid.Row="6"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_4"
+                   Grid.Row="6"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_5"
+                   Grid.Row="6"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_6"
+                   Grid.Row="6"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_7"
+                   Grid.Row="6"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_8"
+                   Grid.Row="6"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_9"
+                   Grid.Row="6"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_10"
+                   Grid.Row="6"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_11"
+                   Grid.Row="6"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_12"
+                   Grid.Row="6"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_13"
+                   Grid.Row="6"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb6_14"
+                   Grid.Row="6"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_0"
+                   Grid.Row="7"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_1"
+                   Grid.Row="7"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_2"
+                   Grid.Row="7"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_3"
+                   Grid.Row="7"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_4"
+                   Grid.Row="7"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_5"
+                   Grid.Row="7"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_6"
+                   Grid.Row="7"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_7"
+                   Grid.Row="7"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_8"
+                   Grid.Row="7"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_9"
+                   Grid.Row="7"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_10"
+                   Grid.Row="7"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_11"
+                   Grid.Row="7"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_12"
+                   Grid.Row="7"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_13"
+                   Grid.Row="7"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb7_14"
+                   Grid.Row="7"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_0"
+                   Grid.Row="8"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_1"
+                   Grid.Row="8"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_2"
+                   Grid.Row="8"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_3"
+                   Grid.Row="8"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_4"
+                   Grid.Row="8"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_5"
+                   Grid.Row="8"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_6"
+                   Grid.Row="8"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_7"
+                   Grid.Row="8"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_8"
+                   Grid.Row="8"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_9"
+                   Grid.Row="8"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_10"
+                   Grid.Row="8"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_11"
+                   Grid.Row="8"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_12"
+                   Grid.Row="8"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_13"
+                   Grid.Row="8"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb8_14"
+                   Grid.Row="8"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_0"
+                   Grid.Row="9"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_1"
+                   Grid.Row="9"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_2"
+                   Grid.Row="9"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_3"
+                   Grid.Row="9"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_4"
+                   Grid.Row="9"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_5"
+                   Grid.Row="9"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_6"
+                   Grid.Row="9"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_7"
+                   Grid.Row="9"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_8"
+                   Grid.Row="9"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_9"
+                   Grid.Row="9"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_10"
+                   Grid.Row="9"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_11"
+                   Grid.Row="9"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_12"
+                   Grid.Row="9"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_13"
+                   Grid.Row="9"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb9_14"
+                   Grid.Row="9"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_0"
+                   Grid.Row="10"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_1"
+                   Grid.Row="10"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_2"
+                   Grid.Row="10"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_3"
+                   Grid.Row="10"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_4"
+                   Grid.Row="10"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_5"
+                   Grid.Row="10"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_6"
+                   Grid.Row="10"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_7"
+                   Grid.Row="10"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_8"
+                   Grid.Row="10"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_9"
+                   Grid.Row="10"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_10"
+                   Grid.Row="10"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_11"
+                   Grid.Row="10"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_12"
+                   Grid.Row="10"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_13"
+                   Grid.Row="10"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb10_14"
+                   Grid.Row="10"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_0"
+                   Grid.Row="11"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_1"
+                   Grid.Row="11"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_2"
+                   Grid.Row="11"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_3"
+                   Grid.Row="11"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_4"
+                   Grid.Row="11"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_5"
+                   Grid.Row="11"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_6"
+                   Grid.Row="11"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_7"
+                   Grid.Row="11"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_8"
+                   Grid.Row="11"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_9"
+                   Grid.Row="11"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_10"
+                   Grid.Row="11"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_11"
+                   Grid.Row="11"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_12"
+                   Grid.Row="11"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_13"
+                   Grid.Row="11"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb11_14"
+                   Grid.Row="11"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_0"
+                   Grid.Row="12"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_1"
+                   Grid.Row="12"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_2"
+                   Grid.Row="12"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_3"
+                   Grid.Row="12"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_4"
+                   Grid.Row="12"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_5"
+                   Grid.Row="12"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_6"
+                   Grid.Row="12"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_7"
+                   Grid.Row="12"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_8"
+                   Grid.Row="12"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_9"
+                   Grid.Row="12"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_10"
+                   Grid.Row="12"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_11"
+                   Grid.Row="12"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_12"
+                   Grid.Row="12"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_13"
+                   Grid.Row="12"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb12_14"
+                   Grid.Row="12"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_0"
+                   Grid.Row="13"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_1"
+                   Grid.Row="13"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_2"
+                   Grid.Row="13"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_3"
+                   Grid.Row="13"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_4"
+                   Grid.Row="13"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_5"
+                   Grid.Row="13"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_6"
+                   Grid.Row="13"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_7"
+                   Grid.Row="13"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_8"
+                   Grid.Row="13"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_9"
+                   Grid.Row="13"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_10"
+                   Grid.Row="13"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_11"
+                   Grid.Row="13"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_12"
+                   Grid.Row="13"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_13"
+                   Grid.Row="13"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb13_14"
+                   Grid.Row="13"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_0"
+                   Grid.Row="14"
+                   Grid.Column="0"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_1"
+                   Grid.Row="14"
+                   Grid.Column="1"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_2"
+                   Grid.Row="14"
+                   Grid.Column="2"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_3"
+                   Grid.Row="14"
+                   Grid.Column="3"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_4"
+                   Grid.Row="14"
+                   Grid.Column="4"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_5"
+                   Grid.Row="14"
+                   Grid.Column="5"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_6"
+                   Grid.Row="14"
+                   Grid.Column="6"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_7"
+                   Grid.Row="14"
+                   Grid.Column="7"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_8"
+                   Grid.Row="14"
+                   Grid.Column="8"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_9"
+                   Grid.Row="14"
+                   Grid.Column="9"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_10"
+                   Grid.Row="14"
+                   Grid.Column="10"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_11"
+                   Grid.Row="14"
+                   Grid.Column="11"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_12"
+                   Grid.Row="14"
+                   Grid.Column="12"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_13"
+                   Grid.Row="14"
+                   Grid.Column="13"
+                   Style="{StaticResource Tile}" />
+
+        <TextBlock Name="Tb14_14"
+                   Grid.Row="14"
+                   Grid.Column="14"
+                   Style="{StaticResource Tile}" />
+        
+        <Button Name="BLeft"
+                Grid.Row="17"
+                Grid.Column="1"
+                Style="{StaticResource ControlButton}"
+                Click="BLeft_OnClick">←</Button>
+        
+        <Button Name="BUp"
+                Grid.Row="15"
+                Grid.Column="3"
+                Style="{StaticResource ControlButton}"
+                Click="BUp_OnClick">↑</Button>
+        
+        <Button Name="BRight"
+                Grid.Row="17"
+                Grid.Column="5"
+                Style="{StaticResource ControlButton}"
+                Click="BRight_OnClick">→</Button>
+        
+        <Button Name="BDown"
+                Grid.Row="19"
+                Grid.Column="3"
+                Style="{StaticResource ControlButton}"
+                Click="BDown_OnClick">↓</Button>
+        
+    </Grid>
+</Window>
