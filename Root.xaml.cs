@@ -42,10 +42,16 @@ public partial class Root : Window
     public Root()
     {
         InitializeComponent();
-        
+        InitGame(null, null);
+    }
+
+    private void InitGame(object? sender, EventArgs? e)
+    {
         //I know this is terrible, but don't worry, I didn't write it myself
         //I made python do it
         //anyways, this is tears and blood and I don't care enough to fix this*
+        //it's the fault of this mf known as wpf because it doesn't allow to init widgets in the code behind
+        //ok, it probably does, but I have no idea how to do it
         _renderedBoard = new TextBlock[_size, _size]
         {
             { Tb0_0, Tb0_1, Tb0_2, Tb0_3, Tb0_4, Tb0_5, Tb0_6, Tb0_7, Tb0_8, Tb0_9, Tb0_10, Tb0_11, Tb0_12, Tb0_13, Tb0_14 },
@@ -94,13 +100,14 @@ public partial class Root : Window
     }
 
     //starts the game loop
-    //10 ticks per second
+    //10 game ticks per second
     //hope this won't be laggy
     private void InitTimer()
     {
         _timer = new DispatcherTimer();
         
         _timer.Tick += new EventHandler(UpdateBoard);
+        _timer.Tick += new EventHandler(UpdateGameData);
         _timer.Tick += new EventHandler(RenderBoard);
         
         _timer.Interval = TimeSpan.FromSeconds(0.1d);
@@ -108,13 +115,49 @@ public partial class Root : Window
         _timer.Start();
     }
 
+    private void UpdateGameData(object? sender, EventArgs e)
+    {
+        TbDeathMsg.Text = _snake.IsAlive ? "" : "He died :(";
+        
+        TbScore.Text = $"Score: {_snake.AppleCounter}";
+        
+        TbRestartMsg.Text = _snake.IsAlive ? "" : "Press any button\nto restart";
+
+        if (!_snake.IsAlive)
+        {
+            BLeft.Click -= BLeft_OnClick;
+            BUp.Click -= BUp_OnClick;
+            BRight.Click -= BRight_OnClick;
+            BDown.Click -= BDown_OnClick;
+
+            BLeft.Click += InitGame;
+            BUp.Click += InitGame;
+            BRight.Click += InitGame;
+            BDown.Click += InitGame;
+            
+            return;
+        }
+        BLeft.Click -= InitGame;
+        BUp.Click -= InitGame;
+        BRight.Click -= InitGame;
+        BDown.Click -= InitGame;
+
+        BLeft.Click += BLeft_OnClick;
+        BUp.Click += BUp_OnClick;
+        BRight.Click += BRight_OnClick;
+        BDown.Click += BDown_OnClick;
+    }
+
     private void UpdateBoard(object? sender, EventArgs e)
     {
-        _snake.SetGoingDirection(_snakeDirection);
+        if (_snake.IsAlive)
+        {
+            _snake.GoingDirection = _snakeDirection;
         
-        _snake.Move();
+            _snake.Move();
         
-        _metaBoard = _snake.Board;
+            _metaBoard = _snake.Board;
+        }
     }
 
     private void RenderBoard(object? sender, EventArgs e)
