@@ -16,6 +16,15 @@ public class CardinalDirection
         { SnakeHead.Right , CardinalDirection.Right},
         { SnakeHead.Down , CardinalDirection.Down}
     };
+
+    private static readonly Dictionary<CardinalDirection, CardinalDirection> s_oppositeDirections =
+        new Dictionary<CardinalDirection, CardinalDirection>()
+        {
+            {CardinalDirection.Left, CardinalDirection.Right},
+            {CardinalDirection.Up, CardinalDirection.Down},
+            {CardinalDirection.Right, CardinalDirection.Left},
+            {CardinalDirection.Down, CardinalDirection.Up}
+        };
     
     private Vector2Int _vector;
 
@@ -29,8 +38,18 @@ public class CardinalDirection
         _vector = vector;
     }
 
+    public CardinalDirection Opposite()
+    {
+        return s_oppositeDirections[this];
+    }
+
     public static CardinalDirection Of(SnakeHead head)
     {
         return s_directions[head];
+    }
+
+    public static CardinalDirection OppositeOf(CardinalDirection direction)
+    {
+        return s_oppositeDirections[direction];
     }
 }

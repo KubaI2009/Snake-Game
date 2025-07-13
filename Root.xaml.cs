@@ -17,6 +17,18 @@ namespace SnakeGame;
 /// </summary>
 public partial class Root : Window
 {
+    private static Dictionary<Key, CardinalDirection> s_directions = new Dictionary<Key, CardinalDirection>()
+    {
+        {Key.Left, CardinalDirection.Left},
+        {Key.Up, CardinalDirection.Up},
+        {Key.Right, CardinalDirection.Right},
+        {Key.Down, CardinalDirection.Down},
+        {Key.A, CardinalDirection.Left},
+        {Key.W, CardinalDirection.Up},
+        {Key.D, CardinalDirection.Right},
+        {Key.S, CardinalDirection.Down}
+    };
+    
     private static Dictionary<TileType, TileStyleData> s_styles = new Dictionary<TileType, TileStyleData>()
     {
         { TileType.Empty , new TileStyleData(new SolidColorBrush(Colors.Black), "")},
@@ -27,6 +39,9 @@ public partial class Root : Window
         { TileType.HeadRight , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "→")},
         { TileType.HeadDown , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "↓")},
     };
+
+    private static double s_timerInterval = 0.7d;
+    private static int s_appleInterval = 5;
 
     private const int _size = 15;
 
@@ -110,42 +125,23 @@ public partial class Root : Window
         _timer.Tick += new EventHandler(UpdateGameData);
         _timer.Tick += new EventHandler(RenderBoard);
         
-        _timer.Interval = TimeSpan.FromSeconds(0.1d);
-        _timer.Interval = TimeSpan.FromSeconds(0.5d); //for testing purposes
+        _timer.Interval = TimeSpan.FromSeconds(s_timerInterval);
         _timer.Start();
     }
 
     private void UpdateGameData(object? sender, EventArgs e)
     {
-        TbDeathMsg.Text = _snake.IsAlive ? "" : "He died :(";
+        //Console.WriteLine(_snake.IsAlive);
         
-        TbScore.Text = $"Score: {_snake.AppleCounter}";
+        _timer.Interval = TimeSpan.FromSeconds(s_timerInterval / (FloorDiv(_snake.Score, s_appleInterval) + 1));
         
-        TbRestartMsg.Text = _snake.IsAlive ? "" : "Press any button\nto restart";
+        TbScore.Text = $"Score: {_snake.Score}";
 
         if (!_snake.IsAlive)
         {
-            BLeft.Click -= BLeft_OnClick;
-            BUp.Click -= BUp_OnClick;
-            BRight.Click -= BRight_OnClick;
-            BDown.Click -= BDown_OnClick;
-
-            BLeft.Click += InitGame;
-            BUp.Click += InitGame;
-            BRight.Click += InitGame;
-            BDown.Click += InitGame;
-            
-            return;
+            _timer.Stop();
+            TbDeathMsg.Text = "Game over :(";
         }
-        BLeft.Click -= InitGame;
-        BUp.Click -= InitGame;
-        BRight.Click -= InitGame;
-        BDown.Click -= InitGame;
-
-        BLeft.Click += BLeft_OnClick;
-        BUp.Click += BUp_OnClick;
-        BRight.Click += BRight_OnClick;
-        BDown.Click += BDown_OnClick;
     }
 
     private void UpdateBoard(object? sender, EventArgs e)
@@ -177,11 +173,6 @@ public partial class Root : Window
         }
     }
 
-    private int Square(int x)
-    {
-        return x * x;
-    }
-
     private void BLeft_OnClick(object sender, RoutedEventArgs e)
     {
         _snakeDirection = CardinalDirection.Left;
@@ -200,5 +191,48 @@ public partial class Root : Window
     private void BDown_OnClick(object sender, RoutedEventArgs e)
     {
         _snakeDirection = CardinalDirection.Down;
+    }
+
+    private void Root_OnKeyDown(object sender, KeyEventArgs e)
+    {
+        //Console.WriteLine($"{e.Key}");
+        
+        CardinalDirection? direction = KeyToDirection(e.Key);
+
+        if (direction != null)
+        {
+            _snakeDirection = direction != _snakeDirection.Opposite() ? direction : _snakeDirection;
+        }
+    }
+
+    private static CardinalDirection? KeyToDirection(Key key)
+    {
+        try
+        {
+            return s_directions[key];
+        }
+        catch (IndexOutOfRangeException)
+        {
+            return null;
+        }
+    }
+
+    private int Square(int x)
+    {
+        return x * x;
+    }
+
+    private int FloorDiv(int x, int y)
+    {
+        int result = 0;
+
+        while (x > 0)
+        {
+            x -= y;
+            
+            result++;
+        }
+        
+        return result;
     }
 }

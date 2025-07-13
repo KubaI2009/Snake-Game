@@ -38,6 +38,8 @@ public class Snake
         { SnakeHead.Right , TileType.HeadRight},
         { SnakeHead.Down , TileType.HeadDown}
     };
+
+    private static readonly int s_appleInterval = 7;
     
     private TileType[,] _board;
     private Vector2Int _headPosition;
@@ -90,7 +92,7 @@ public class Snake
         set { _head = s_headsFromDirections[value]; }
     }
 
-    public int AppleCounter
+    public int Score
     {
         get { return _body.Count - 1; }
     }
@@ -226,18 +228,22 @@ public class Snake
         }
         
         //generates an apple randomly
-        if (ateApple)
+        //if _score is multiple of s_appleInterval it generates two
+        for (int i = 0; i <= (Score % s_appleInterval == 0 ? 1 : 0); i++)
         {
-            Vector2Int applePosition;
-
-            while (true)
+            if (ateApple)
             {
-                applePosition = RandomPosition();
+                Vector2Int applePosition;
 
-                if (!_body.Contains(applePosition))
+                while (true)
                 {
-                    _board[applePosition.Y, applePosition.X] = TileType.Apple;
-                    break;
+                    applePosition = RandomPosition();
+
+                    if (!_body.Contains(applePosition))
+                    {
+                        _board[applePosition.Y, applePosition.X] = TileType.Apple;
+                        break;
+                    }
                 }
             }
         }
@@ -253,7 +259,7 @@ public class Snake
             try
             {
                 ateApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.Apple;
-                _isAlive = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.Empty || ateApple;
+                _isAlive = (_board[newHeadPosition.Y, newHeadPosition.X] == TileType.Empty || ateApple) && IsInBoard();
             }
             catch (IndexOutOfRangeException)
             {
@@ -263,14 +269,15 @@ public class Snake
             UpdateBodyAndHead(newHeadPosition, ateApple);
             
             UpdateBoard(ateApple);
-        
-            _isAlive = IsInBoard();
         }
     }
 
     private bool IsInBoard()
     {
-        return _headPosition.X < _board.GetLength(1) && _headPosition.Y < _board.GetLength(1);
+        return _headPosition.X < _board.GetLength(1)
+               && _headPosition.Y < _board.GetLength(1)
+               && _headPosition.X >= 0
+               && _headPosition.Y >= 0;;
     }
 
     private void Die()
@@ -281,5 +288,19 @@ public class Snake
     private int Square(int x)
     {
         return x * x;
+    }
+
+    private int FloorDiv(int x, int y)
+    {
+        int result = 0;
+
+        while (x > 0)
+        {
+            x -= y;
+            
+            result++;
+        }
+        
+        return result;
     }
 }
