@@ -22,4 +22,9 @@ public struct Vector2Int
     {
         return new Vector2Int(v.X + u.X, v.Y + u.Y);
     }
+
+    public bool Equals(Vector2Int v)
+    {
+        return X == v.X && Y == v.Y;
+    }
 }

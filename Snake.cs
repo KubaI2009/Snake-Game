@@ -275,7 +275,7 @@ public class Snake
     private bool IsInBoard()
     {
         return _headPosition.X < _board.GetLength(1)
-               && _headPosition.Y < _board.GetLength(1)
+               && _headPosition.Y < _board.GetLength(0)
                && _headPosition.X >= 0
                && _headPosition.Y >= 0;;
     }

@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Vector = System.Numerics.Vector;
 
 namespace SnakeGame;
 
@@ -53,6 +54,13 @@ public partial class Root : Window
     private Snake _snake;
 
     private CardinalDirection _snakeDirection;
+
+    private EventHandler _updateBoard;
+    private EventHandler _updateGameData;
+    private EventHandler _renderBoard;
+
+    private List<Vector2Int> _positionsToAnimate;
+    private int _animationTicks;
     
     public Root()
     {
@@ -111,13 +119,35 @@ public partial class Root : Window
         
         _metaBoard[startingPosition.Y, startingPosition.X] = TileType.HeadRight;
         
-        Random random = new Random((int) DateTime.Now.Ticks);
-        _metaBoard[random.Next(0, _metaBoard.GetLength(0)), random.Next(startingPosition.X, _metaBoard.GetLength(1))] = TileType.Apple;
+        PlaceStartingApple(startingPosition);
         
         _snakeDirection = CardinalDirection.Of(snakeHead);
         _snake = new Snake(_metaBoard, startingPosition, snakeHead);
         
         InitTimer();
+    }
+
+    private void PlaceStartingApple(Vector2Int startingPosition)
+    {
+        Vector2Int applePosition;
+
+        while (true)
+        {
+            applePosition = RandomPosition();
+
+            if (!applePosition.Equals(startingPosition))
+            {
+                _metaBoard[applePosition.Y, applePosition.X] = TileType.Apple;
+                break;
+            }
+        }
+    }
+
+    private Vector2Int RandomPosition()
+    {
+        Random random = new Random((int) DateTime.Now.Ticks);
+        
+        return new Vector2Int(random.Next(0, _metaBoard.GetLength(0)), random.Next(0, _metaBoard.GetLength(0)));
     }
 
     //starts the game loop
@@ -127,9 +157,13 @@ public partial class Root : Window
     {
         _timer = new DispatcherTimer();
         
-        _timer.Tick += new EventHandler(UpdateBoard);
-        _timer.Tick += new EventHandler(UpdateGameData);
-        _timer.Tick += new EventHandler(RenderBoard);
+        _updateBoard = new EventHandler(UpdateBoard);
+        _updateGameData = new EventHandler(UpdateGameData);
+        _renderBoard = new EventHandler(RenderBoard);
+
+        _timer.Tick += _updateBoard;
+        _timer.Tick += _updateGameData;
+        _timer.Tick += _renderBoard;
         
         _timer.Interval = TimeSpan.FromSeconds(s_timerInterval);
         _timer.Start();
@@ -145,9 +179,85 @@ public partial class Root : Window
 
         if (!_snake.IsAlive)
         {
-            _timer.Stop();
             TbDeathMsg.Text = "Game over :(";
+            
+            _timer.Stop();
+            
+            InitDeathAnimation();
         }
+    }
+
+    private void InitDeathAnimation()
+    {
+        _animationTicks = 0;
+        
+        _positionsToAnimate = new List<Vector2Int>();
+        _positionsToAnimate.Add(ClosestInBoard(_snake.HeadPosition));
+
+        _timer.Tick -= _updateBoard;
+        _timer.Tick -= _updateGameData;
+        
+        _timer.Tick += new EventHandler(PlayDeathAnimation);
+        
+        _timer.Interval = TimeSpan.FromSeconds(0.2d);
+        
+        _timer.Start();
+    }
+
+    private void PlayDeathAnimation(object? sender, EventArgs e)
+    {
+        _animationTicks++;
+        
+        //PrintDebugData();
+        
+        if (_animationTicks <= 1)
+        {
+            foreach (Vector2Int position in _positionsToAnimate)
+            {
+                _metaBoard[position.Y, position.X] = TileType.Empty;
+            }
+            
+            return;
+        }
+
+        if (_animationTicks > GetLongerBoardLength())
+        {
+            _timer.Stop();
+            return;
+        }
+        
+        List<Vector2Int> newPositionsToAnimate = new List<Vector2Int>();
+        
+        foreach (Vector2Int position in _positionsToAnimate)
+        {
+            Vector2Int[] neighbors = GetNeighbors(position);
+
+            foreach (Vector2Int neighbor in neighbors)
+            {
+                if (_metaBoard[neighbor.Y, neighbor.X] == TileType.Body)
+                {
+                    newPositionsToAnimate.Add(neighbor);
+                    
+                    _metaBoard[neighbor.Y, neighbor.X] = TileType.Empty;
+                }
+            }
+        }
+        
+        _positionsToAnimate = newPositionsToAnimate;
+    }
+
+    private void PrintDebugData()
+    {
+        Console.WriteLine($"Animation Ticks: {_animationTicks}");
+        
+        Console.Write("[ |");
+        
+        foreach (Vector2Int position in _positionsToAnimate)
+        {
+            Console.Write($" ({position.X}, {position.Y}) {GetNeighbors(position).Length} |");
+        }
+        
+        Console.WriteLine("]");
     }
 
     private void UpdateBoard(object? sender, EventArgs e)
@@ -179,26 +289,6 @@ public partial class Root : Window
         }
     }
 
-    private void BLeft_OnClick(object sender, RoutedEventArgs e)
-    {
-        _snakeDirection = CardinalDirection.Left;
-    }
-
-    private void BUp_OnClick(object sender, RoutedEventArgs e)
-    {
-        _snakeDirection = CardinalDirection.Up;
-    }
-
-    private void BRight_OnClick(object sender, RoutedEventArgs e)
-    {
-        _snakeDirection = CardinalDirection.Right;
-    }
-
-    private void BDown_OnClick(object sender, RoutedEventArgs e)
-    {
-        _snakeDirection = CardinalDirection.Down;
-    }
-
     private void Root_OnKeyDown(object sender, KeyEventArgs e)
     {
         //Console.WriteLine($"{e.Key}");
@@ -207,7 +297,7 @@ public partial class Root : Window
 
         if (direction != null)
         {
-            _snakeDirection = direction != _snakeDirection.Opposite() ? direction : _snakeDirection;
+            _snakeDirection = direction != _snakeDirection.Opposite() ? direction : _snake.Body.Count > 1 ? _snakeDirection : direction;
         }
     }
 
@@ -240,5 +330,54 @@ public partial class Root : Window
         }
         
         return result;
+    }
+
+    private Vector2Int[] GetNeighbors(Vector2Int position)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+        
+        Vector2Int[] offsets = new Vector2Int[]
+        {
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 0),
+            new Vector2Int(0, -1),
+            new Vector2Int(-1, 0)
+        };
+
+        foreach (Vector2Int offset in offsets)
+        {
+            Vector2Int neighbor = new Vector2Int(position.X + offset.X, position.Y + offset.Y);
+
+            if (VectorIsInBoard(neighbor))
+            {
+                neighbors.Add(neighbor);
+            }
+        }
+        
+        return neighbors.ToArray();
+    }
+
+    private bool VectorIsInBoard(Vector2Int vector)
+    {
+        return vector.X < _metaBoard.GetLength(1)
+               && vector.Y < _metaBoard.GetLength(0)
+               && vector.X >= 0
+               && vector.Y >= 0;;
+    }
+
+    private Vector2Int ClosestInBoard(Vector2Int vector)
+    {
+        vector.Y = vector.Y < 0 ? 0 : vector.Y;
+        vector.Y = vector.Y >= _metaBoard.GetLength(0) ? _metaBoard.GetLength(0) - 1 : vector.Y;
+        
+        vector.X = vector.X < 0 ? 0 : vector.X;
+        vector.X = vector.X >= _metaBoard.GetLength(1) ? _metaBoard.GetLength(0) - 1 : vector.X;
+        
+        return vector;
+    }
+
+    private int GetLongerBoardLength()
+    {
+        return _metaBoard.GetLength(0) >= _metaBoard.GetLength(1) ? _metaBoard.GetLength(0) : _metaBoard.GetLength(1);;
     }
 }
