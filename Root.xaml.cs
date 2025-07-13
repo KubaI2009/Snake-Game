@@ -18,7 +18,7 @@ namespace SnakeGame;
 /// </summary>
 public partial class Root : Window
 {
-    private static Dictionary<Key, CardinalDirection> s_directions = new Dictionary<Key, CardinalDirection>()
+    private static readonly Dictionary<Key, CardinalDirection> s_directions = new Dictionary<Key, CardinalDirection>()
     {
         {Key.Left, CardinalDirection.Left},
         {Key.Up, CardinalDirection.Up},
@@ -30,23 +30,32 @@ public partial class Root : Window
         {Key.S, CardinalDirection.Down}
     };
     
-    private static Dictionary<TileType, TileStyleData> s_styles = new Dictionary<TileType, TileStyleData>()
+    private static readonly Dictionary<TileType, TileStyleData> s_styles = new Dictionary<TileType, TileStyleData>()
     {
         { TileType.Empty , new TileStyleData(new SolidColorBrush(Colors.Black), "")},
         { TileType.Apple , new TileStyleData(new SolidColorBrush(Colors.Red), "")},
+        { TileType.RottenApple , new TileStyleData(new SolidColorBrush(Colors.DarkGreen), "")},
         { TileType.Body , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "")},
         { TileType.HeadLeft , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "←")},
         { TileType.HeadUp , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "↑")},
         { TileType.HeadRight , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "→")},
-        { TileType.HeadDown , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "↓")},
+        { TileType.HeadDown , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "↓")}
+    };
+    
+    private static readonly TileStyleData[] s_magicAppleStyles = new TileStyleData[] 
+    {
+        new TileStyleData(new SolidColorBrush(Colors.Pink), ""),
+        new TileStyleData(new SolidColorBrush(Colors.CornflowerBlue), ""),
+        new TileStyleData(new SolidColorBrush(Colors.Yellow), "")
     };
 
-    private static double s_timerInterval = 0.7d;
-    private static int s_appleInterval = 5;
+    private static readonly double s_timerInterval = 0.7d;
+    private static readonly int s_appleInterval = 5;
 
     private const int _size = 15;
 
     private DispatcherTimer _timer;
+    private int _ticks;
     
     private TextBlock[,] _renderedBoard;
     private TileType[,] _metaBoard;
@@ -54,10 +63,6 @@ public partial class Root : Window
     private Snake _snake;
 
     private CardinalDirection _snakeDirection;
-
-    private EventHandler _updateBoard;
-    private EventHandler _updateGameData;
-    private EventHandler _renderBoard;
 
     private List<Vector2Int> _positionsToAnimate;
     private int _animationTicks;
@@ -100,10 +105,10 @@ public partial class Root : Window
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
+            { TileType.Empty ,TileType.RottenApple ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
+            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.MagicApple ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
@@ -155,19 +160,20 @@ public partial class Root : Window
     //hope this won't be laggy
     private void InitTimer()
     {
-        _timer = new DispatcherTimer();
+        _ticks = 0;
         
-        _updateBoard = new EventHandler(UpdateBoard);
-        _updateGameData = new EventHandler(UpdateGameData);
-        _renderBoard = new EventHandler(RenderBoard);
+        _timer = new DispatcherTimer();
 
-        _timer.Tick += _updateBoard;
-        _timer.Tick += _updateGameData;
-        _timer.Tick += _renderBoard;
+        _timer.Tick += UpdateBoard;
+        _timer.Tick += UpdateGameData;
+        _timer.Tick += RenderBoard;
+        _timer.Tick += IncreaseTicks;
         
         _timer.Interval = TimeSpan.FromSeconds(s_timerInterval);
         _timer.Start();
     }
+
+    private void IncreaseTicks(object? sender, EventArgs? e) => _ticks++;
 
     private void UpdateGameData(object? sender, EventArgs e)
     {
@@ -194,10 +200,11 @@ public partial class Root : Window
         _positionsToAnimate = new List<Vector2Int>();
         _positionsToAnimate.Add(ClosestInBoard(_snake.HeadPosition));
 
-        _timer.Tick -= _updateBoard;
-        _timer.Tick -= _updateGameData;
+        _timer.Tick -= UpdateBoard;
+        _timer.Tick -= UpdateGameData;
+        _timer.Tick -= IncreaseTicks;
         
-        _timer.Tick += new EventHandler(PlayDeathAnimation);
+        _timer.Tick += PlayDeathAnimation;
         
         _timer.Interval = TimeSpan.FromSeconds(0.2d);
         
@@ -234,12 +241,9 @@ public partial class Root : Window
 
             foreach (Vector2Int neighbor in neighbors)
             {
-                if (_metaBoard[neighbor.Y, neighbor.X] == TileType.Body)
-                {
-                    newPositionsToAnimate.Add(neighbor);
-                    
-                    _metaBoard[neighbor.Y, neighbor.X] = TileType.Empty;
-                }
+                newPositionsToAnimate.Add(neighbor);
+                
+                _metaBoard[neighbor.Y, neighbor.X] = _metaBoard[neighbor.Y, neighbor.X] == TileType.Body ? TileType.Empty : _metaBoard[neighbor.Y, neighbor.X];
             }
         }
         
@@ -266,7 +270,7 @@ public partial class Root : Window
         {
             _snake.GoingDirection = _snakeDirection;
         
-            _snake.Move();
+            _snake.Move(_ticks);
         
             _metaBoard = _snake.Board;
         }
@@ -274,15 +278,29 @@ public partial class Root : Window
 
     private void RenderBoard(object? sender, EventArgs e)
     {
-        for (int i = 0; i < Square(_size); i++)
+        for (int i = 0; i < _metaBoard.GetLength(0) * _metaBoard.GetLength(1); i++)
         {
             //y - row
             //x - column
 
             int y = i / _size;
             int x = i % _size;
+                
+            TileStyleData style;
 
-            TileStyleData style = s_styles[_metaBoard[y, x]];
+            try
+            {
+                style = s_styles[_metaBoard[y, x]];
+            }
+            catch (System.Collections.Generic.KeyNotFoundException)
+            {
+                style = s_styles[TileType.Empty];
+                
+                if (_metaBoard[y, x] == TileType.MagicApple)
+                {
+                    style = s_magicAppleStyles[_ticks % s_magicAppleStyles.Length];
+                }
+            }
             
             _renderedBoard[y, x].Background = style.Background;
             _renderedBoard[y, x].Text = style.Text;
