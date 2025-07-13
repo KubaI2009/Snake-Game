@@ -175,7 +175,7 @@ public class Snake
 
     private Vector2Int RandomPosition()
     {
-        Random random = new Random((int)DateTime.Now.Ticks);
+        Random random = new Random((int) DateTime.Now.Ticks);
         
         return new Vector2Int(random.Next(0, _board.GetLength(0)), random.Next(0, _board.GetLength(0)));
     }

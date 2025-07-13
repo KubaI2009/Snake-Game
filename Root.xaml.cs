@@ -89,7 +89,7 @@ public partial class Root : Window
         //*this too
         _metaBoard = new TileType[_size, _size]
         {
-            { TileType.HeadRight ,TileType.Empty ,TileType.Empty ,TileType.Apple ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
+            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
@@ -107,9 +107,15 @@ public partial class Root : Window
         };
 
         SnakeHead snakeHead = SnakeHead.Right;
+        Vector2Int startingPosition = new Vector2Int(0, _metaBoard.GetLength(0) / 2);
+        
+        _metaBoard[startingPosition.Y, startingPosition.X] = TileType.HeadRight;
+        
+        Random random = new Random((int) DateTime.Now.Ticks);
+        _metaBoard[random.Next(0, _metaBoard.GetLength(0)), random.Next(startingPosition.X, _metaBoard.GetLength(1))] = TileType.Apple;
         
         _snakeDirection = CardinalDirection.Of(snakeHead);
-        _snake = new Snake(_metaBoard, new Vector2Int(0, 0), snakeHead);
+        _snake = new Snake(_metaBoard, startingPosition, snakeHead);
         
         InitTimer();
     }
