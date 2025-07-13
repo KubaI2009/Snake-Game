@@ -33,7 +33,7 @@ public class CardinalDirection
         get { return _vector; }
     }
     
-    private CardinalDirection(Vector2Int vector)
+    protected CardinalDirection(Vector2Int vector)
     {
         _vector = vector;
     }

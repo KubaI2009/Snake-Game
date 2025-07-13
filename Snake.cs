@@ -108,7 +108,7 @@ public class Snake
     
     //so basically the snake gets some head
     //I know this sounds bad without context
-    private static SnakeHead GetHead(TileType headTile)
+    private static SnakeHead HeadOf(TileType headTile)
     {
         try
         {
@@ -253,7 +253,7 @@ public class Snake
     {
         if (_isAlive)
         {
-            Vector2Int newHeadPosition = Vector2Int.SumOfVectors(_headPosition, GoingDirection.Vector);
+            Vector2Int newHeadPosition = GetNewHeadPosition();
             bool ateApple;
             
             try
@@ -272,6 +272,16 @@ public class Snake
         }
     }
 
+    public Vector2Int GetNewHeadPosition()
+    {
+        Vector2Int newHeadPosition = Vector2Int.SumOfVectors(_headPosition, GoingDirection.Vector);
+        
+        newHeadPosition.Y %= _board.GetLength(0);
+        newHeadPosition.X %= _board.GetLength(1);
+        
+        return newHeadPosition;
+    }
+    
     private bool IsInBoard()
     {
         return _headPosition.X < _board.GetLength(1)
