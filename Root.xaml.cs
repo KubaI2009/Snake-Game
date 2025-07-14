@@ -73,6 +73,7 @@ public partial class Root : Window
     private Snake _snake;
 
     private CardinalDirection _snakeDirection;
+    private bool _clicked;
 
     private List<Vector2Int> _positionsToAnimate;
     private int _animationTicks;
@@ -135,7 +136,8 @@ public partial class Root : Window
         _metaBoard.SetTile(startingPosition, TileType.Empty);
         
         PlaceStartingApple(startingPosition);
-        
+
+        _clicked = false;
         _snakeDirection = CardinalDirection.Of(snakeHead);
         _snake = new Snake(_metaBoard, startingPosition, snakeHead);
 
@@ -212,6 +214,7 @@ public partial class Root : Window
         _tickTimer.Tick += UpdateGameData;
         _tickTimer.Tick += RenderBoard;
         _tickTimer.Tick += IncreaseTicks;
+        _tickTimer.Tick += (object? sender, EventArgs e) => { _clicked = false; };
         
         _tickTimer.Interval = TimeSpan.FromSeconds(s_timerInterval);
         _tickTimer.Start();
@@ -358,10 +361,12 @@ public partial class Root : Window
         
         CardinalDirection? direction = KeyToDirection(e.Key);
 
-        if (direction != null)
+        if (direction != null && !_clicked)
         {
             _snakeDirection = direction != _snakeDirection.Opposite() ? direction : _snake.Body.Count > 1 ? _snakeDirection : direction;
         }
+        
+        _clicked = true;
     }
 
     private static CardinalDirection? KeyToDirection(Key key)
