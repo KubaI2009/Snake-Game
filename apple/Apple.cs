@@ -22,11 +22,6 @@ public class Apple
         _position = position;
     }
 
-    public virtual void ApplyEffectToSnake(Snake snake)
-    {
-        snake.AteApple = true;
-    }
-
     public virtual TileType ToTileType()
     {
         return TileType.Apple;

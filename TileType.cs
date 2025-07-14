@@ -4,6 +4,7 @@ public enum TileType
 {
     Empty,
     Apple,
+    DeliciousApple,
     RottenApple,
     MagicApple,
     Body,

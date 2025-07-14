@@ -79,7 +79,7 @@ public class Board
     {
         if (_appleMatrix[y, x] != null)
         {
-            Console.WriteLine("test");
+            //Console.WriteLine("test");
             
             _appleMatrix[y, x] = null;
             
@@ -163,7 +163,7 @@ public class Board
             {
                 specialApple.DecreaseLifeTime(1);
 
-                Console.WriteLine($"{specialApple.GetType()}: {specialApple.LifeTime}");
+                //Console.WriteLine($"{specialApple.GetType()}: {specialApple.LifeTime}");
             }
         }
     }
