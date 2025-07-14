@@ -10,6 +10,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using SnakeGame.snake;
+using SnakeGame.board;
+using SnakeGame.apple;
 using Vector = System.Numerics.Vector;
 
 namespace SnakeGame;
@@ -59,7 +61,7 @@ public partial class Root : Window
     private int _ticks;
     
     private TextBlock[,] _renderedBoard;
-    private TileType[,] _metaBoard;
+    private Board _metaBoard;
     
     private Snake _snake;
 
@@ -101,7 +103,7 @@ public partial class Root : Window
         };
 
         //*this too
-        _metaBoard = new TileType[_size, _size]
+        _metaBoard = Board.Of(new TileType[_size, _size]
         {
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
@@ -118,12 +120,12 @@ public partial class Root : Window
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
             { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-        };
+        });
 
         SnakeHead snakeHead = SnakeHead.Right;
-        Vector2Int startingPosition = new Vector2Int(0, _metaBoard.GetLength(0) / 2);
+        Vector2Int startingPosition = new Vector2Int(0, _metaBoard.Height / 2);
         
-        _metaBoard[startingPosition.Y, startingPosition.X] = TileType.HeadRight;
+        _metaBoard.SetTile(startingPosition, TileType.Empty);
         
         PlaceStartingApple(startingPosition);
         
@@ -143,7 +145,7 @@ public partial class Root : Window
 
             if (!applePosition.Equals(startingPosition))
             {
-                _metaBoard[applePosition.Y, applePosition.X] = TileType.Apple;
+                _metaBoard.SetTile(applePosition, TileType.Apple);
                 break;
             }
         }
@@ -153,7 +155,7 @@ public partial class Root : Window
     {
         Random random = new Random((int) DateTime.Now.Ticks);
         
-        return new Vector2Int(random.Next(0, _metaBoard.GetLength(0)), random.Next(0, _metaBoard.GetLength(0)));
+        return new Vector2Int(random.Next(0, _metaBoard.Height), random.Next(0, _metaBoard.Height));
     }
 
     //starts the game loop
@@ -222,7 +224,7 @@ public partial class Root : Window
         {
             foreach (Vector2Int position in _positionsToAnimate)
             {
-                _metaBoard[position.Y, position.X] = TileType.Empty;
+                _metaBoard.SetTile(position, TileType.Empty);
             }
             
             return;
@@ -244,7 +246,7 @@ public partial class Root : Window
             {
                 newPositionsToAnimate.Add(neighbor);
                 
-                _metaBoard[neighbor.Y, neighbor.X] = _metaBoard[neighbor.Y, neighbor.X] == TileType.Body ? TileType.Empty : _metaBoard[neighbor.Y, neighbor.X];
+                _metaBoard.SetTile(neighbor, _metaBoard.GetTile(neighbor) == TileType.Body ? TileType.Empty : _metaBoard.GetTile(neighbor));
             }
         }
         
@@ -279,25 +281,25 @@ public partial class Root : Window
 
     private void RenderBoard(object? sender, EventArgs e)
     {
-        for (int i = 0; i < _metaBoard.GetLength(0) * _metaBoard.GetLength(1); i++)
+        for (int i = 0; i < _metaBoard.Height * _metaBoard.Width; i++)
         {
             //y - row
             //x - column
 
-            int y = i / _size;
-            int x = i % _size;
+            int y = i / _metaBoard.Width;
+            int x = i % _metaBoard.Width;
                 
             TileStyleData style;
 
             try
             {
-                style = s_styles[_metaBoard[y, x]];
+                style = s_styles[_metaBoard.GetTile(y, x)];
             }
             catch (System.Collections.Generic.KeyNotFoundException)
             {
                 style = s_styles[TileType.Empty];
                 
-                if (_metaBoard[y, x] == TileType.MagicApple)
+                if (_metaBoard.GetTile(y, x) == TileType.MagicApple)
                 {
                     style = s_magicAppleStyles[_ticks % s_magicAppleStyles.Length];
                 }
@@ -378,8 +380,8 @@ public partial class Root : Window
 
     private bool VectorIsInBoard(Vector2Int vector)
     {
-        return vector.X < _metaBoard.GetLength(1)
-               && vector.Y < _metaBoard.GetLength(0)
+        return vector.X < _metaBoard.Width
+               && vector.Y < _metaBoard.Height
                && vector.X >= 0
                && vector.Y >= 0;;
     }
@@ -387,16 +389,16 @@ public partial class Root : Window
     private Vector2Int ClosestInBoard(Vector2Int vector)
     {
         vector.Y = vector.Y < 0 ? 0 : vector.Y;
-        vector.Y = vector.Y >= _metaBoard.GetLength(0) ? _metaBoard.GetLength(0) - 1 : vector.Y;
+        vector.Y = vector.Y >= _metaBoard.Height ? _metaBoard.Height - 1 : vector.Y;
         
         vector.X = vector.X < 0 ? 0 : vector.X;
-        vector.X = vector.X >= _metaBoard.GetLength(1) ? _metaBoard.GetLength(0) - 1 : vector.X;
+        vector.X = vector.X >= _metaBoard.Width ? _metaBoard.Width - 1 : vector.X;
         
         return vector;
     }
 
     private int GetLongerBoardLength()
     {
-        return _metaBoard.GetLength(0) >= _metaBoard.GetLength(1) ? _metaBoard.GetLength(0) : _metaBoard.GetLength(1);;
+        return _metaBoard.Height >= _metaBoard.Width ? _metaBoard.Height : _metaBoard.Width;
     }
 }

@@ -42,10 +42,12 @@ public class Board
         _board = new TileType[height, width];
         _appleMatrix = new Apple?[height, width];
 
-        for (int i = 0; i <= height * width; i++)
+        for (int i = 0; i < height * width; i++)
         {
             int y = i / width;
             int x = i % width;
+
+            Console.WriteLine($"({y}, {x})");
             
             _board[y, x] = TileType.Empty;
             _appleMatrix[y, x] = null;
@@ -72,14 +74,24 @@ public class Board
         return _appleMatrix[position.Y, position.X];
     }
 
+    public void SetTile(int y, int x, TileType type)
+    {
+        _board[y, x] = type;
+    }
+
     public void SetTile(Vector2Int position, TileType type)
     {
-        _board[position.Y, position.X] = type;
+        SetTile(position.Y, position.X, type);
+    }
+
+    public TileType GetTile(int y, int x)
+    {
+        return _board[y, x];
     }
 
     public TileType GetTile(Vector2Int position)
     {
-        return _board[position.Y, position.X];
+        return GetTile(position.Y, position.X);
     }
 
     public void Update()
@@ -91,5 +103,10 @@ public class Board
             
             _board[y, x] = _appleMatrix[y, x] != null ? _appleMatrix[y, x].ToTileType() : TileType.Empty;;
         }
+    }
+
+    public static Board Of(TileType[,] board)
+    {
+        return new Board(board.GetLength(0), board.GetLength(1));
     }
 }
