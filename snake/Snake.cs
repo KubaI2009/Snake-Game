@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace SnakeGame;
+﻿namespace SnakeGame.snake;
 
 public class Snake
 {
@@ -50,6 +48,10 @@ public class Snake
 
     private bool _isAlive;
 
+    private bool _ateApple;
+    private bool _ateRottenApple;
+    private bool _ateMagicApple;
+
     public TileType[,] Board
     {
         get { return _board; }
@@ -73,7 +75,7 @@ public class Snake
         set
         {
             _head = value;
-            UpdateBodyAndHead(_headPosition, true, false);
+            UpdateBodyAndHead(_headPosition);
         }
     }
 
@@ -97,6 +99,28 @@ public class Snake
     {
         get { return _body.Count - 1; }
     }
+
+    public bool AteApple
+    {
+        get { return _ateApple; }
+        set { _ateApple = value; }
+    }
+
+    public bool AteRottenApple
+    {
+        get { return _ateRottenApple; }
+        set { _ateRottenApple = value; }
+    }
+
+    public bool AteMagicApple
+    {
+        get { return _ateMagicApple; }
+        set
+        {
+            _ateMagicApple = value;
+            AteApple = _ateMagicApple || AteApple;
+        }
+    }
     
     public Snake(TileType[,] board, Vector2Int position, SnakeHead head)
     {
@@ -105,6 +129,9 @@ public class Snake
         _head = head;
         _body = new List<Vector2Int>() { _headPosition };
         _isAlive = true;
+        _ateApple = false;
+        _ateRottenApple = false;
+        _ateMagicApple = false;
     }
     
     //so basically the snake gets some head
@@ -131,7 +158,7 @@ public class Snake
         return s_directions[_head];
     }*/
 
-    private void UpdateBodyAndHead(Vector2Int newHeadPosition, bool ateApple, bool ateMagicApple)
+    private void UpdateBodyAndHead(Vector2Int newHeadPosition)
     {
         //index 0 is always the head
 
@@ -151,12 +178,12 @@ public class Snake
             newBody.Add(segment);
         }
 
-        if (!ateApple)
+        if (!_ateApple)
         {
             newBody.RemoveAt(newBody.Count - 1);
         }
 
-        if (ateMagicApple)
+        if (_ateMagicApple)
         {
             for (int i = 1; i < 5; i++)
             {
@@ -204,7 +231,7 @@ public class Snake
         return new Vector2Int(random.Next(0, _board.GetLength(0)), random.Next(0, _board.GetLength(0)));
     }
 
-    private void UpdateBoard(bool ateApple, int ticks)
+    private void UpdateBoard(int ticks)
     {
         //Console.WriteLine(ateApple);
         
@@ -258,12 +285,12 @@ public class Snake
         RemoveTilesOfType(TileType.RottenApple, ticks % 100 == 0);
         RemoveTilesOfType(TileType.MagicApple, ticks % 40 == 0);
         
-        PlaceApple(ateApple);
+        PlaceApple();
     }
     
     //generates an apple randomly
     //if _score is multiple of s_appleInterval it generates two
-    private void PlaceApple(bool ateApple)
+    private void PlaceApple()
     {
         Random random = new Random((int) DateTime.Now.Ticks);
         TileType apple = TileType.Apple;
@@ -275,7 +302,7 @@ public class Snake
         
         for (int i = 0; i <= (Score % s_appleInterval == 0 ? 1 : 0); i++)
         {
-            if (ateApple)
+            if (AteApple)
             {
                 Vector2Int applePosition;
 
@@ -315,6 +342,13 @@ public class Snake
     {
         return Score >= s_specialAppleScore;
     }
+
+    private void RefluxApples()
+    {
+        AteApple = false;
+        AteRottenApple = false;
+        AteMagicApple = false;
+    }
     
     public void Move(int ticks)
     {
@@ -327,21 +361,28 @@ public class Snake
             
             try
             {
-                ateRottenApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.RottenApple;
-                ateMagicApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.MagicApple;
-                ateApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.Apple || ateMagicApple;
+                AteApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.Apple;
+                AteRottenApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.RottenApple;
+                AteMagicApple = _board[newHeadPosition.Y, newHeadPosition.X] == TileType.MagicApple;
                 
-                _isAlive = (_board[newHeadPosition.Y, newHeadPosition.X] == TileType.Empty || ateApple || ateMagicApple) && IsInBoard() && !ateRottenApple;;
+                _isAlive = (_board[newHeadPosition.Y, newHeadPosition.X] == TileType.Empty || AteApple) && IsInBoard() && !AteRottenApple;
             }
             catch (IndexOutOfRangeException)
             {
-                ateApple = false;
+                _ateApple = false;
             }
         
-            UpdateBodyAndHead(newHeadPosition, ateApple, ateMagicApple);
+            UpdateBodyAndHead(newHeadPosition);
             
-            UpdateBoard(ateApple, ticks);
+            UpdateBoard(ticks);
+            
+            RefluxApples();
         }
+    }
+
+    public void Kill()
+    {
+        _isAlive = false;
     }
 
     private void RemoveTilesOfType(TileType type, bool remove)
