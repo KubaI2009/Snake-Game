@@ -410,7 +410,7 @@ public class Snake
                                     break;
                                 }
                             }
-                        } else if (random.Next(10) == 0)
+                        } else if (random.Next(10) == 0 && SpecialAppleCanAppear())
                         {   
                             Vector2Int disgustingApplePosition;
 

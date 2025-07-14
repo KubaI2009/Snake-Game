@@ -41,10 +41,10 @@ public partial class Root : Window
         { TileType.DisgustingApple , new TileStyleData(new SolidColorBrush(Colors.MediumPurple), "")},
         { TileType.RottenApple , new TileStyleData(new SolidColorBrush(Colors.DarkGreen), "")},
         { TileType.Body , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "")},
-        { TileType.HeadLeft , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "←")},
-        { TileType.HeadUp , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "↑")},
-        { TileType.HeadRight , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "→")},
-        { TileType.HeadDown , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "↓")}
+        { TileType.HeadLeft , new TileStyleData(new SolidColorBrush(Colors.GreenYellow),  ": ")},
+        { TileType.HeadUp , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "' '")},
+        { TileType.HeadRight , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), " :")},
+        { TileType.HeadDown , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), ". .")}
     };
     
     private static readonly TileStyleData[] s_magicAppleStyles = new TileStyleData[] 
@@ -198,7 +198,7 @@ public partial class Root : Window
         
         seconds -= minutes * 60;
 
-        return $"{hours}:{minutes}:{seconds}";
+        return $"{hours}:{minutes:D2}:{seconds:D2}";
     }
 
     //starts the game loop
