@@ -67,11 +67,18 @@ public class Board
     public void SetApple(Apple apple)
     {
         _appleMatrix[apple.Y, apple.X] = apple;
+        
+        Update();
+    }
+
+    public Apple? GetApple(int y, int x)
+    {
+        return _appleMatrix[y, x];
     }
 
     public Apple? GetApple(Vector2Int position)
     {
-        return _appleMatrix[position.Y, position.X];
+        return GetApple(position.Y, position.X);
     }
 
     public void SetTile(int y, int x, TileType type)
@@ -101,7 +108,7 @@ public class Board
             int y = i / Width;
             int x = i % Width;
             
-            _board[y, x] = _appleMatrix[y, x] != null ? _appleMatrix[y, x].ToTileType() : TileType.Empty;;
+            SetTile(y, x, GetApple(y, x) != null ? GetApple(y, x).ToTileType() : TileType.Empty);
         }
     }
 

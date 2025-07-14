@@ -54,10 +54,15 @@ public partial class Root : Window
 
     private static readonly double s_timerInterval = 0.7d;
     private static readonly int s_appleInterval = 5;
+    
+    private static readonly string s_gameTitle = "Snake Game";
 
     private const int _size = 15;
-
+    
     private DispatcherTimer _timer;
+    private int _seconds;
+
+    private DispatcherTimer _tickTimer;
     private int _ticks;
     
     private TextBlock[,] _renderedBoard;
@@ -131,8 +136,9 @@ public partial class Root : Window
         
         _snakeDirection = CardinalDirection.Of(snakeHead);
         _snake = new Snake(_metaBoard, startingPosition, snakeHead);
-        
+
         InitTimer();
+        InitTickTimer();
     }
 
     private void PlaceStartingApple(Vector2Int startingPosition)
@@ -158,22 +164,54 @@ public partial class Root : Window
         return new Vector2Int(random.Next(0, _metaBoard.Height), random.Next(0, _metaBoard.Height));
     }
 
-    //starts the game loop
-    //10 game ticks per second
-    //hope this won't be laggy
     private void InitTimer()
     {
-        _ticks = 0;
+        _seconds = 0;
         
         _timer = new DispatcherTimer();
 
-        _timer.Tick += UpdateBoard;
-        _timer.Tick += UpdateGameData;
-        _timer.Tick += RenderBoard;
-        _timer.Tick += IncreaseTicks;
+        _timer.Tick += IncreaseTime;
         
-        _timer.Interval = TimeSpan.FromSeconds(s_timerInterval);
+        _timer.Interval = TimeSpan.FromSeconds(1d);
         _timer.Start();
+    }
+    
+    private void IncreaseTime(object? sender, EventArgs e)
+    {
+        _seconds++;
+
+        Title = $"{s_gameTitle} {GetTime(_seconds)}";
+    }
+
+    private string GetTime(int seconds)
+    {
+        int hours = seconds / 3600;
+        
+        seconds -= hours * 3600;
+        
+        int minutes = seconds / 60;
+        
+        seconds -= minutes * 60;
+
+        return $"{hours}:{minutes}:{seconds}";
+    }
+
+    //starts the game loop
+    //10 game ticks per second
+    //hope this won't be laggy
+    private void InitTickTimer()
+    {
+        _ticks = 0;
+        
+        _tickTimer = new DispatcherTimer();
+
+        _tickTimer.Tick += UpdateBoard;
+        _tickTimer.Tick += UpdateGameData;
+        _tickTimer.Tick += RenderBoard;
+        _tickTimer.Tick += IncreaseTicks;
+        
+        _tickTimer.Interval = TimeSpan.FromSeconds(s_timerInterval);
+        _tickTimer.Start();
     }
 
     private void IncreaseTicks(object? sender, EventArgs? e) => _ticks++;
@@ -182,7 +220,7 @@ public partial class Root : Window
     {
         //Console.WriteLine(_snake.IsAlive);
         
-        _timer.Interval = TimeSpan.FromSeconds(s_timerInterval / (FloorDiv(_snake.Score, s_appleInterval) + 1));
+        _tickTimer.Interval = TimeSpan.FromSeconds(s_timerInterval / (FloorDiv(_snake.Score, s_appleInterval) + 1));
         
         TbScore.Text = $"Score: {_snake.Score}";
 
@@ -191,6 +229,7 @@ public partial class Root : Window
             TbDeathMsg.Text = "Game over :(";
             
             _timer.Stop();
+            _tickTimer.Stop();
             
             InitDeathAnimation();
         }
@@ -203,15 +242,15 @@ public partial class Root : Window
         _positionsToAnimate = new List<Vector2Int>();
         _positionsToAnimate.Add(ClosestInBoard(_snake.HeadPosition));
 
-        _timer.Tick -= UpdateBoard;
-        _timer.Tick -= UpdateGameData;
-        _timer.Tick -= IncreaseTicks;
+        _tickTimer.Tick -= UpdateBoard;
+        _tickTimer.Tick -= UpdateGameData;
+        _tickTimer.Tick -= IncreaseTicks;
         
-        _timer.Tick += PlayDeathAnimation;
+        _tickTimer.Tick += PlayDeathAnimation;
         
-        _timer.Interval = TimeSpan.FromSeconds(0.2d);
+        _tickTimer.Interval = TimeSpan.FromSeconds(0.2d);
         
-        _timer.Start();
+        _tickTimer.Start();
     }
 
     private void PlayDeathAnimation(object? sender, EventArgs e)
@@ -232,7 +271,7 @@ public partial class Root : Window
 
         if (_animationTicks > GetLongerBoardLength())
         {
-            _timer.Stop();
+            _tickTimer.Stop();
             return;
         }
         
