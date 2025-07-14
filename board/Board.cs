@@ -4,6 +4,12 @@ namespace SnakeGame.board;
 
 public class Board
 {
+    private static readonly TileType[] s_appleRepleacable =
+    {
+        TileType.Empty,
+        TileType.RottenApple
+    };
+    
     private TileType[,] _board;
     private Apple?[,] _appleMatrix;
 
@@ -47,7 +53,7 @@ public class Board
             int y = i / width;
             int x = i % width;
 
-            Console.WriteLine($"({y}, {x})");
+            //Console.WriteLine($"({y}, {x})");
             
             _board[y, x] = TileType.Empty;
             _appleMatrix[y, x] = null;
@@ -62,6 +68,27 @@ public class Board
         }
         
         SetApple(apple);
+    }
+
+    public bool RemoveAppleAt(Vector2Int position)
+    {
+        return RemoveAppleAt(position.Y, position.X);
+    }
+
+    public bool RemoveAppleAt(int y, int x)
+    {
+        if (_appleMatrix[y, x] != null)
+        {
+            Console.WriteLine("test");
+            
+            _appleMatrix[y, x] = null;
+            
+            Update();
+            
+            return true;
+        }
+        
+        return false;
     }
 
     public void SetApple(Apple apple)
@@ -101,14 +128,43 @@ public class Board
         return GetTile(position.Y, position.X);
     }
 
+    public void UpdateAndDeteriorate()
+    {
+        DeteriorateApples();
+        Update();
+    }
+
     public void Update()
     {
-        for (int i = 0; i <= Height * Width; i++)
+        foreach (Apple apple in Apples)
+        {
+            if (apple is SpecialApple specialApple && !specialApple.IsAlive)
+            {
+                _appleMatrix[specialApple.Y, specialApple.X] = null;
+                
+                SetTile(specialApple.Y, specialApple.X, TileType.Empty);
+            }
+        }
+        
+        for (int i = 0; i < Height * Width; i++)
         {
             int y = i / Width;
             int x = i % Width;
             
-            SetTile(y, x, GetApple(y, x) != null ? GetApple(y, x).ToTileType() : TileType.Empty);
+            SetTile(y, x, GetApple(y, x) != null && s_appleRepleacable.Contains(GetTile(y, x)) ? GetApple(y, x).ToTileType() : GetTile(y, x));
+        }
+    }
+
+    public void DeteriorateApples()
+    {
+        foreach (Apple apple in Apples)
+        {
+            if (apple is SpecialApple specialApple)
+            {
+                specialApple.DecreaseLifeTime(1);
+
+                Console.WriteLine($"{specialApple.GetType()}: {specialApple.LifeTime}");
+            }
         }
     }
 

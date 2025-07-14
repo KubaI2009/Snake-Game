@@ -151,7 +151,8 @@ public partial class Root : Window
 
             if (!applePosition.Equals(startingPosition))
             {
-                _metaBoard.SetTile(applePosition, TileType.Apple);
+                _metaBoard.AddApple(new Apple(applePosition));
+                //_metaBoard.SetTile(applePosition, TileType.Apple);
                 break;
             }
         }
@@ -312,7 +313,7 @@ public partial class Root : Window
         {
             _snake.GoingDirection = _snakeDirection;
         
-            _snake.Move(_ticks);
+            _snake.Move();
         
             _metaBoard = _snake.Board;
         }

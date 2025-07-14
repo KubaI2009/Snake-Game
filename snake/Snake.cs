@@ -236,7 +236,7 @@ public class Snake
         return new Vector2Int(random.Next(0, _board.Height), random.Next(0, _board.Height));
     }
 
-    private void UpdateBoard(int ticks)
+    private void UpdateBoard()
     {
         //Console.WriteLine(ateApple);
         
@@ -244,6 +244,8 @@ public class Snake
         {
             return;
         }
+        
+        _board.UpdateAndDeteriorate();
         
         for (int i = 0; i < Square(_board.Width); i++)
         {
@@ -287,8 +289,8 @@ public class Snake
         }
         
         //apples
-        RemoveTilesOfType(TileType.RottenApple, ticks % 100 == 0);
-        RemoveTilesOfType(TileType.MagicApple, ticks % 40 == 0);
+        //RemoveTilesOfType(TileType.RottenApple, ticks % 100 == 0);
+        //RemoveTilesOfType(TileType.MagicApple, ticks % 40 == 0);
         
         PlaceApple();
     }
@@ -315,9 +317,10 @@ public class Snake
                 {
                     applePosition = RandomPositionOnBoard();
 
-                    if (!_body.Contains(applePosition))
+                    if (!_body.Contains(applePosition) && _board.GetApple(applePosition) == null)
                     {
-                        _board.SetTile(applePosition.Y, applePosition.X, appleTile);
+                        _board.AddApple(new Apple(applePosition));
+                        //_board.SetTile(applePosition.Y, applePosition.X, appleTile);
 
                         if (random.Next(10) == 0 && SpecialAppleCanAppear())
                         {
@@ -327,9 +330,35 @@ public class Snake
                             {
                                 rottenApplePosition = RandomPositionOnBoard();
 
-                                if (!_body.Contains(rottenApplePosition) && !applePosition.Equals(rottenApplePosition))
+                                if (!_body.Contains(rottenApplePosition)
+                                    && !applePosition.Equals(rottenApplePosition)
+                                    && DoesNotShareAxisWithHead(rottenApplePosition))
                                 {
-                                    _board.SetTile(rottenApplePosition.Y, rottenApplePosition.X, TileType.Body);
+                                    try
+                                    {
+                                        _board.AddApple(new RottenApple(65, rottenApplePosition));
+                                    }
+                                    catch (AppleOverwritingException)
+                                    {
+                                        continue;
+                                    }
+                                    //_board.SetTile(rottenApplePosition.Y, rottenApplePosition.X, TileType.Body);
+                                    
+                                    break;
+                                }
+                            }
+                        } else if (random.Next(10) == 0 && SpecialAppleCanAppear())
+                        {
+                            Vector2Int magicApplePosition;
+
+                            while (true)
+                            {
+                                magicApplePosition = RandomPositionOnBoard();
+
+                                if (!_body.Contains(magicApplePosition)
+                                    && !applePosition.Equals(magicApplePosition))
+                                {
+                                    _board.SetApple(new MagicApple(55, magicApplePosition));
                                     
                                     break;
                                 }
@@ -341,6 +370,11 @@ public class Snake
                 }
             }
         }
+    }
+
+    private bool DoesNotShareAxisWithHead(Vector2Int position)
+    {
+        return position.X != _headPosition.X || position.Y != _headPosition.Y;
     }
 
     private bool SpecialAppleCanAppear()
@@ -355,10 +389,14 @@ public class Snake
         AteMagicApple = false;
     }
     
-    public void Move(int ticks)
+    public void Move()
     {
+        RefluxApples();
+        
         if (_isAlive)
         {
+            UpdateBoard();
+            
             Vector2Int newHeadPosition = GetNewHeadPosition();
             
             try
@@ -368,6 +406,9 @@ public class Snake
                 AteMagicApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.MagicApple;
                 
                 _isAlive = (_board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.Empty || AteApple) && IsInBoard() && !AteRottenApple;
+                
+                _board.RemoveAppleAt(newHeadPosition);
+                //_board.SetTile(newHeadPosition, AteApple ? TileType.Empty : _board.GetTile(newHeadPosition);
             }
             catch (IndexOutOfRangeException)
             {
@@ -376,9 +417,7 @@ public class Snake
         
             UpdateBodyAndHead(newHeadPosition);
             
-            UpdateBoard(ticks);
-            
-            RefluxApples();
+            UpdateBoard();
         }
     }
 
