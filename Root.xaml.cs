@@ -38,6 +38,7 @@ public partial class Root : Window
         { TileType.Empty , new TileStyleData(new SolidColorBrush(Colors.Black), "")},
         { TileType.Apple , new TileStyleData(new SolidColorBrush(Colors.Red), "")},
         { TileType.DeliciousApple , new TileStyleData(new SolidColorBrush(Colors.DarkOrange), "")},
+        { TileType.DisgustingApple , new TileStyleData(new SolidColorBrush(Colors.MediumPurple), "")},
         { TileType.RottenApple , new TileStyleData(new SolidColorBrush(Colors.DarkGreen), "")},
         { TileType.Body , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "")},
         { TileType.HeadLeft , new TileStyleData(new SolidColorBrush(Colors.GreenYellow), "←")},
@@ -369,7 +370,7 @@ public partial class Root : Window
         {
             return s_directions[key];
         }
-        catch (IndexOutOfRangeException)
+        catch (KeyNotFoundException)
         {
             return null;
         }

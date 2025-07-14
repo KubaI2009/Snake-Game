@@ -64,6 +64,7 @@ public class Snake
 
     private bool _ateApple;
     private bool _ateDeliciousApple;
+    private bool _ateDisgustingApple;
     private bool _ateRottenApple;
     private bool _ateMagicApple;
 
@@ -146,6 +147,16 @@ public class Snake
             AteApple = AteDeliciousApple || AteApple;
         }
     }
+
+    public bool AteDisgustingApple
+    {
+        get { return _ateDisgustingApple; }
+        private set
+        {
+            _ateDisgustingApple = value;
+            AteApple = AteDisgustingApple || AteApple;
+        }
+    }
     
     public Snake(TileType[,] board, Vector2Int position, SnakeHead head) : this(SnakeGame.board.Board.Of(board), position, head) { }
     
@@ -159,6 +170,7 @@ public class Snake
         _score = 0;
         _ateApple = false;
         _ateDeliciousApple = false;
+        _ateDisgustingApple = false;
         _ateRottenApple = false;
         _ateMagicApple = false;
     }
@@ -206,8 +218,23 @@ public class Snake
         {
             newBody.Add(segment);
         }
+
+        if (AteApple)
+        {
+            IncreaseScore(1);
+        }
+
+        if (AteDeliciousApple)
+        {
+            IncreaseScore(2);
+        }
+
+        if (AteDisgustingApple)
+        {
+            IncreaseScore(-4);
+        }
         
-        IncreaseScore(AteApple ? AteDeliciousApple ? 3 : 1 : 0);
+        //IncreaseScore(AteApple ? AteDeliciousApple ? 3 : AteDisgustingApple ? -3 : 1 : 0);
 
         if (!AteApple)
         {
@@ -337,7 +364,9 @@ public class Snake
 
                     if (!_body.Contains(applePosition) && _board.GetApple(applePosition) == null)
                     {
-                        _board.AddApple(new Random().Next(15) == 0 ? new DeliciousApple(applePosition) : new Apple(applePosition));
+                        int j = new Random().Next(15);
+                        
+                        _board.AddApple(j == 0 ? new DeliciousApple(applePosition) : new Apple(applePosition));
                         //_board.SetTile(applePosition.Y, applePosition.X, appleTile);
 
                         if (random.Next(10) == 0 && SpecialAppleCanAppear())
@@ -381,6 +410,22 @@ public class Snake
                                     break;
                                 }
                             }
+                        } else if (random.Next(10) == 0)
+                        {   
+                            Vector2Int disgustingApplePosition;
+
+                            while (true)
+                            {
+                                disgustingApplePosition = RandomPositionOnBoard();
+
+                                if (!_body.Contains(disgustingApplePosition)
+                                    && !applePosition.Equals(disgustingApplePosition))
+                                {
+                                    _board.SetApple(new DisgustingApple(65 , disgustingApplePosition));
+                                    
+                                    break;
+                                }
+                            }
                         }
                         
                         break;
@@ -404,6 +449,7 @@ public class Snake
     {
         AteApple = false;
         AteDeliciousApple = false;
+        AteDisgustingApple = false;
         AteRottenApple = false;
         AteMagicApple = false;
     }
@@ -422,6 +468,7 @@ public class Snake
             {
                 AteApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.Apple;
                 AteDeliciousApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.DeliciousApple;
+                AteDisgustingApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.DisgustingApple;
                 AteRottenApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.RottenApple;
                 AteMagicApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.MagicApple;
                 
