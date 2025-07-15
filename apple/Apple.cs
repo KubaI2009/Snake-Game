@@ -26,4 +26,9 @@ public class Apple
     {
         return TileType.Apple;
     }
+
+    public virtual int Points()
+    {
+        return 1;
+    }
 }

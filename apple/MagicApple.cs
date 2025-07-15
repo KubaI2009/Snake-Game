@@ -11,4 +11,9 @@ public class MagicApple : SpecialApple
     {
         return TileType.MagicApple;
     }
+
+    public override int Points()
+    {
+        return 1;
+    }
 }

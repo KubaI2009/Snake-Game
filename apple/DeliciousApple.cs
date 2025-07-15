@@ -8,4 +8,9 @@ public class DeliciousApple : Apple
     {
         return TileType.DeliciousApple;
     }
+
+    public override int Points()
+    {
+        return 3;
+    }
 }

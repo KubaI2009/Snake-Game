@@ -2,12 +2,17 @@
 
 namespace SnakeGame.apple;
 
-public class RottenApple : SpecialApple
+public class RottenApple : SpecialApple, KillingApple
 {
     public RottenApple(int lifeTime, Vector2Int position) : base(lifeTime, position) { }
 
     public override TileType ToTileType()
     {
         return TileType.RottenApple;
+    }
+
+    public override int Points()
+    {
+        return 0;
     }
 }

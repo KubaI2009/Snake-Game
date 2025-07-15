@@ -8,4 +8,9 @@ public class DisgustingApple : SpecialApple
     {
         return TileType.DisgustingApple;
     }
+
+    public override int Points()
+    {
+        return -3;
+    }
 }

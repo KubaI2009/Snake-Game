@@ -2,14 +2,14 @@
 
 namespace SnakeGame;
 
-public class TileStyleData
+public struct TileStyleData
 {
-    private SolidColorBrush _background;
+    private SolidColorBrush _color;
     private string _text;
 
-    public SolidColorBrush Background
+    public SolidColorBrush Color
     {
-        get { return _background; }
+        get { return _color; }
     }
 
     public string Text
@@ -17,9 +17,9 @@ public class TileStyleData
         get { return _text; }
     }
     
-    public TileStyleData(SolidColorBrush background, string text)
+    public TileStyleData(SolidColorBrush color, string text)
     {
-        _background = background;
+        _color = color;
         _text = text;
     }
 }

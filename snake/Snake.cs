@@ -62,11 +62,13 @@ public class Snake
 
     private int _score;
 
-    private bool _ateApple;
-    private bool _ateDeliciousApple;
-    private bool _ateDisgustingApple;
-    private bool _ateRottenApple;
-    private bool _ateMagicApple;
+    //private bool _ateApple;
+    //private bool _ateDeliciousApple;
+    //private bool _ateDisgustingApple;
+    //private bool _ateRottenApple;
+    //private bool _ateMagicApple;
+    
+    private Apple? _appleEaten;
 
     public Board Board
     {
@@ -114,48 +116,13 @@ public class Snake
     public int Score
     {
         get { return _score; }
+        private set { _score = value; }
     }
 
-    public bool AteApple
+    public Apple? AppleEaten
     {
-        get { return _ateApple; }
-        private set { _ateApple = value; }
-    }
-
-    public bool AteRottenApple
-    {
-        get { return _ateRottenApple; }
-        private set { _ateRottenApple = value; }
-    }
-
-    public bool AteMagicApple
-    {
-        get { return _ateMagicApple; }
-        private set
-        {
-            _ateMagicApple = value;
-            AteApple = AteMagicApple || AteApple;
-        }
-    }
-
-    public bool AteDeliciousApple
-    {
-        get { return _ateDeliciousApple; }
-        private set
-        {
-            _ateDeliciousApple = value;
-            AteApple = AteDeliciousApple || AteApple;
-        }
-    }
-
-    public bool AteDisgustingApple
-    {
-        get { return _ateDisgustingApple; }
-        private set
-        {
-            _ateDisgustingApple = value;
-            AteApple = AteDisgustingApple || AteApple;
-        }
+        get { return _appleEaten; }
+        private set { _appleEaten = value; }
     }
     
     public Snake(TileType[,] board, Vector2Int position, SnakeHead head) : this(SnakeGame.board.Board.Of(board), position, head) { }
@@ -168,11 +135,7 @@ public class Snake
         _body = new List<Vector2Int>() { _headPosition };
         _isAlive = true;
         _score = 0;
-        _ateApple = false;
-        _ateDeliciousApple = false;
-        _ateDisgustingApple = false;
-        _ateRottenApple = false;
-        _ateMagicApple = false;
+        _appleEaten = null;
     }
     
     //so basically the snake gets some head
@@ -218,30 +181,19 @@ public class Snake
         {
             newBody.Add(segment);
         }
-
-        if (AteApple)
-        {
-            IncreaseScore(1);
-        }
-
-        if (AteDeliciousApple)
-        {
-            IncreaseScore(2);
-        }
-
-        if (AteDisgustingApple)
-        {
-            IncreaseScore(-4);
-        }
         
-        //IncreaseScore(AteApple ? AteDeliciousApple ? 3 : AteDisgustingApple ? -3 : 1 : 0);
-
-        if (!AteApple)
+        if (AppleEaten == null)
         {
             newBody.RemoveAt(newBody.Count - 1);
         }
-
-        if (AteMagicApple)
+        
+        //score increase
+        if (!(AppleEaten is null))
+        {
+            Score += AppleEaten.Points();
+        }
+        
+        if (AppleEaten is MagicApple)
         {
             for (int i = 1; i < 5; i++)
             {
@@ -350,11 +302,10 @@ public class Snake
     private void PlaceApple()
     {
         Random random = new Random((int) DateTime.Now.Ticks);
-        TileType appleTile = TileType.Apple;
         
         for (int i = 0; i <= (Score % s_appleInterval == 0 ? 1 : 0); i++)
         {
-            if (AteApple)
+            if (!(AppleEaten is null) && !(AppleEaten is KillingApple))
             {
                 Vector2Int applePosition;
 
@@ -447,18 +398,20 @@ public class Snake
 
     private void RefluxApples()
     {
-        AteApple = false;
-        AteDeliciousApple = false;
-        AteDisgustingApple = false;
-        AteRottenApple = false;
-        AteMagicApple = false;
+        //AteApple = false;
+        //AteDeliciousApple = false;
+        //AteDisgustingApple = false;
+        //AteRottenApple = false;
+        //AteMagicApple = false;
+
+        AppleEaten = null;
     }
     
     public void Move()
     {
         RefluxApples();
         
-        if (_isAlive)
+        if (IsAlive)
         {
             UpdateBoard();
             
@@ -466,13 +419,17 @@ public class Snake
             
             try
             {
-                AteApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.Apple;
-                AteDeliciousApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.DeliciousApple;
-                AteDisgustingApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.DisgustingApple;
-                AteRottenApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.RottenApple;
-                AteMagicApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.MagicApple;
+                //AteApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.Apple;
+                //AteDeliciousApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.DeliciousApple;
+                //AteDisgustingApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.DisgustingApple;
+                //AteRottenApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.RottenApple;
+                //AteMagicApple = _board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.MagicApple;
                 
-                _isAlive = (_board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.Empty || AteApple) && IsInBoard() && !AteRottenApple;
+                AppleEaten = _board.GetApple(newHeadPosition.Y, newHeadPosition.X);
+                
+                _isAlive = (_board.GetTile(newHeadPosition.Y, newHeadPosition.X) == TileType.Empty ||
+                            (!(AppleEaten is KillingApple) && !(AppleEaten is null)))
+                           && IsInBoard();
                 
                 _board.RemoveAppleAt(newHeadPosition);
                 //_board.SetTile(newHeadPosition, AteApple ? TileType.Empty : _board.GetTile(newHeadPosition);
