@@ -40,6 +40,15 @@ public partial class Root : Window
         new(new SolidColorBrush(Colors.Yellow), "")
     };
 
+    private static readonly TileType[] s_snakeTiles =
+    {
+        TileType.HeadLeft,
+        TileType.HeadUp,
+        TileType.HeadRight,
+        TileType.HeadDown,
+        TileType.Body
+    };
+
     private static readonly double s_timerInterval = 0.7d;
     private static readonly int s_appleInterval = 5;
     
@@ -60,8 +69,7 @@ public partial class Root : Window
 
     private CardinalDirection _snakeDirection;
     private bool _clicked;
-
-    private List<Vector2Int> _positionsToAnimate;
+    
     private int _animationTicks;
     
     public Root()
@@ -230,9 +238,6 @@ public partial class Root : Window
     private void InitDeathAnimation()
     {
         _animationTicks = 0;
-        
-        _positionsToAnimate = new List<Vector2Int>();
-        _positionsToAnimate.Add(ClosestInBoard(_snake.HeadPosition));
 
         _tickTimer.Tick -= UpdateBoard;
         _tickTimer.Tick -= UpdateGameData;
@@ -240,7 +245,7 @@ public partial class Root : Window
         
         _tickTimer.Tick += PlayDeathAnimation;
         
-        _tickTimer.Interval = TimeSpan.FromSeconds(0.2d);
+        _tickTimer.Interval = TimeSpan.FromSeconds(0.05d);
         
         _tickTimer.Start();
     }
@@ -248,54 +253,16 @@ public partial class Root : Window
     private void PlayDeathAnimation(object? sender, EventArgs e)
     {
         _animationTicks++;
-        
-        //PrintDebugData();
-        
-        if (_animationTicks <= 1)
-        {
-            foreach (Vector2Int position in _positionsToAnimate)
-            {
-                _metaBoard.SetTile(position, TileType.Empty);
-            }
-            
-            return;
-        }
 
-        if (_animationTicks > GetLongerBoardLength())
+        Console.WriteLine(_animationTicks);
+
+        if (!SnakeStillExists())
         {
             _tickTimer.Stop();
             return;
         }
         
-        List<Vector2Int> newPositionsToAnimate = new List<Vector2Int>();
-        
-        foreach (Vector2Int position in _positionsToAnimate)
-        {
-            Vector2Int[] neighbors = GetNeighbors(position);
-
-            foreach (Vector2Int neighbor in neighbors)
-            {
-                newPositionsToAnimate.Add(neighbor);
-                
-                _metaBoard.SetTile(neighbor, _metaBoard.GetTile(neighbor) == TileType.Body ? TileType.Empty : _metaBoard.GetTile(neighbor));
-            }
-        }
-        
-        _positionsToAnimate = newPositionsToAnimate;
-    }
-
-    private void PrintDebugData()
-    {
-        Console.WriteLine($"Animation Ticks: {_animationTicks}");
-        
-        Console.Write("[ |");
-        
-        foreach (Vector2Int position in _positionsToAnimate)
-        {
-            Console.Write($" ({position.X}, {position.Y}) {GetNeighbors(position).Length} |");
-        }
-        
-        Console.WriteLine("]");
+        _metaBoard.SetTile(_snake.Body[_animationTicks - 1], TileType.Empty);
     }
 
     private void UpdateBoard(object? sender, EventArgs e)
@@ -433,5 +400,24 @@ public partial class Root : Window
     private int GetLongerBoardLength()
     {
         return _metaBoard.Height >= _metaBoard.Width ? _metaBoard.Height : _metaBoard.Width;
+    }
+
+    private bool SnakeStillExists()
+    {
+        for (int i = 0; i < _metaBoard.Height * _metaBoard.Width; i++)
+        {
+            //y - row
+            //x - column
+
+            int y = i / _metaBoard.Width;
+            int x = i % _metaBoard.Width;
+
+            if (s_snakeTiles.Contains(_metaBoard.GetTile(y, x)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

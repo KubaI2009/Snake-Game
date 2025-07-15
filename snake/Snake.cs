@@ -503,12 +503,12 @@ public class Snake
         _isAlive = false;
     }
 
-    private int Square(int x)
+    private static int Square(int x)
     {
         return x * x;
     }
 
-    private int FloorDiv(int x, int y)
+    private static int FloorDiv(int x, int y)
     {
         int result = 0;
 
