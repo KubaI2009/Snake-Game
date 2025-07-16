@@ -38,7 +38,7 @@
         
         <Style TargetType="Button"
                x:Key="ControlButton">
-            <Setter Property="Margin" Value="0, 0, 0, 0" />
+            <Setter Property="Margin" Value="3, 3, 3, 3" />
             <Setter Property="Background" Value="AliceBlue" />
             <Setter Property="Foreground" Value="DarkSlateGray" />
             <Setter Property="FontSize" Value="20" />
@@ -1211,18 +1211,18 @@
                    Grid.Column="14"
                    Style="{StaticResource Tile}" />
         
-        <TextBlock Name="TbDeathMsg"
-                   Grid.Row="15"
-                   Grid.Column="9"
-                   Grid.ColumnSpan="6"
-                   TextAlignment="Right"
-                   Style="{StaticResource DataDisplay}" />
-        
         <TextBlock Name="TbScore"
                    Grid.Row="15"
                    Grid.Column="0"
                    Grid.ColumnSpan="9"
                    TextAlignment="Left"
                    Style="{StaticResource DataDisplay}" />
+        
+        <Button Name="BRestart"
+                Grid.Row="15"
+                Grid.Column="9"
+                Grid.ColumnSpan="6"
+                Style="{StaticResource ControlButton}"
+                Click="InitGame">Restart</Button>
     </Grid>
 </Window>

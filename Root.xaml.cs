@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,6 +13,7 @@ using System.Windows.Threading;
 using SnakeGame.snake;
 using SnakeGame.board;
 using SnakeGame.apple;
+using Path = System.IO.Path;
 using Vector = System.Numerics.Vector;
 
 namespace SnakeGame;
@@ -53,6 +55,9 @@ public partial class Root : Window
     private static readonly int s_appleInterval = 5;
     
     private static readonly string s_gameTitle = "Snake Game";
+    
+    private static readonly string s_directoryName = "snakeGame";
+    private static readonly string s_scoreboardName = "scoreboard.txt";
 
     private const int _size = 15;
     
@@ -82,7 +87,7 @@ public partial class Root : Window
     {
         //I know this is terrible, but don't worry, I didn't write it myself
         //I made python do it
-        //anyways, this is tears and blood and I don't care enough to fix this*
+        //anyways, this is tears and blood and I don't care enough to fix this
         //it's the fault of this mf known as wpf because it doesn't allow to init widgets in the code behind
         //ok, it probably does, but I have no idea how to do it
         _renderedBoard = new TextBlock[_size, _size]
@@ -104,25 +109,7 @@ public partial class Root : Window
             { Tb14_0, Tb14_1, Tb14_2, Tb14_3, Tb14_4, Tb14_5, Tb14_6, Tb14_7, Tb14_8, Tb14_9, Tb14_10, Tb14_11, Tb14_12, Tb14_13, Tb14_14 }
         };
 
-        //*this too
-        _metaBoard = Board.Of(new TileType[_size, _size]
-        {
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.RottenApple ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.MagicApple ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-            { TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty ,TileType.Empty},
-        });
+        _metaBoard = new Board(_size, _size);
 
         SnakeHead snakeHead = SnakeHead.Right;
         Vector2Int startingPosition = new Vector2Int(0, _metaBoard.Height / 2);
@@ -134,6 +121,8 @@ public partial class Root : Window
         _clicked = false;
         _snakeDirection = CardinalDirection.Of(snakeHead);
         _snake = new Snake(_metaBoard, startingPosition, snakeHead);
+        
+        BRestart.Visibility = Visibility.Collapsed;
 
         InitTimer();
         InitTickTimer();
@@ -226,8 +215,6 @@ public partial class Root : Window
 
         if (!_snake.IsAlive)
         {
-            TbDeathMsg.Text = "Game over :(";
-            
             _timer.Stop();
             _tickTimer.Stop();
             
@@ -245,7 +232,7 @@ public partial class Root : Window
         
         _tickTimer.Tick += PlayDeathAnimation;
         
-        _tickTimer.Interval = TimeSpan.FromSeconds(0.05d);
+        _tickTimer.Interval = TimeSpan.FromSeconds(0.07d / _snake.Body.Count);
         
         _tickTimer.Start();
     }
@@ -254,11 +241,21 @@ public partial class Root : Window
     {
         _animationTicks++;
 
-        Console.WriteLine(_animationTicks);
+        //Console.WriteLine(_animationTicks);
 
         if (!SnakeStillExists())
         {
             _tickTimer.Stop();
+            
+            BRestart.Visibility = Visibility.Visible;
+
+            if (CheckIfNewHighScore())
+            {
+                AnnounceNewHighScore();
+            }
+            
+            AppendScoreboard();
+            
             return;
         }
         
@@ -419,5 +416,105 @@ public partial class Root : Window
         }
 
         return false;
+    }
+
+    private void AppendScoreboard()
+    {
+        string pathToDirectory = PathToDirectory();
+        string pathToScoreBoard = PathToScoreBoard();
+        
+        Directory.CreateDirectory(pathToDirectory);
+        
+        if (!File.Exists(pathToScoreBoard))
+        {
+            using (StreamWriter writer = File.CreateText(pathToScoreBoard))
+            {
+                writer.Write("");
+            }
+        }
+        
+        using (StreamWriter writer = File.AppendText(pathToScoreBoard))
+        {
+            writer.WriteLine($"{_snake.Score}");
+        }
+
+        /*using (StreamReader reader = File.OpenText(pathToScoreBoard))
+        {
+            string line;
+            
+            while ((line = reader.ReadLine()) != null)
+            {
+                Console.WriteLine(line);
+            }
+        }*/
+
+        //Console.WriteLine(path);
+    }
+
+    private int[] GetScoreboard()
+    {
+        string pathToDirectory = PathToDirectory();
+        string pathToScoreBoard = PathToScoreBoard();
+        
+        Directory.CreateDirectory(pathToDirectory);
+        
+        if (!File.Exists(pathToScoreBoard))
+        {
+            return new int[0];
+        }
+
+        List<int> scoreBoard = new List<int>();
+        
+        using (StreamReader reader = File.OpenText(pathToScoreBoard))
+        {
+            string line;
+            
+            while ((line = reader.ReadLine()) != null)
+            {
+                try
+                {
+                    scoreBoard.Add(int.Parse(line.Trim()));
+                }
+                catch (FormatException)
+                {
+                    scoreBoard.Add(0);
+                }
+            }
+        }
+        
+        return scoreBoard.ToArray();
+    }
+
+    private bool CheckIfNewHighScore()
+    {
+        foreach (int score in GetScoreboard())
+        {
+            if (_snake.Score <= score)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void AnnounceNewHighScore()
+    {
+        TbScore.Text = $"New high score!: {_snake.Score}";
+    }
+
+    private static string PathToDirectory()
+    {
+        string systemPath = System.Environment.
+            GetFolderPath(
+                Environment.SpecialFolder.CommonApplicationData
+            );
+        
+        return Path.Combine(systemPath , s_directoryName);
+    }
+
+    private static string PathToScoreBoard()
+    {
+        return Path.Combine(PathToDirectory(), "scoreboard.txt");
     }
 }
