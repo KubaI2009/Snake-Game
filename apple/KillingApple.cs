@@ -1,3 +1,3 @@
 ﻿namespace SnakeGame.apple;
 
-public interface KillingApple { }
+public interface IKillingApple { }

@@ -2,7 +2,7 @@
 
 namespace SnakeGame.apple;
 
-public class RottenApple : SpecialApple, KillingApple
+public class RottenApple : SpecialApple, IKillingApple
 {
     public RottenApple(int lifeTime, Vector2Int position) : base(lifeTime, position) { }
 

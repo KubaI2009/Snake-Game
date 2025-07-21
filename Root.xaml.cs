@@ -19,7 +19,7 @@ using Vector = System.Numerics.Vector;
 namespace SnakeGame;
 
 /// <summary>
-/// Interaction logic for MainWindow.xaml
+/// Interaction logic for Root.xaml
 /// </summary>
 public partial class Root : Window
 {
